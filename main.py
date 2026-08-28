@@ -1,11 +1,12 @@
 import customtkinter as ctk
-from services.modrinth import search_mods, get_compatible_version
+from services.modrinth import search_mods, get_compatible_version, download_mod
 from tkinter import filedialog
 
 def search_all_mods():
     mod_names = mod_textbox.get("1.0", "end").splitlines()
     mc_version = minecraft_version_entry.get()
     loader = loader_dropdown.get().lower()
+    dest_folder = destination_entry.get()
 
     for mod_name in mod_names:
         if mod_name.strip():
@@ -18,6 +19,8 @@ def search_all_mods():
             compatible_version = get_compatible_version(project_id, mc_version, loader)
             if compatible_version:
                 print(f"{mod_name}: "f"{compatible_version['name']}")
+                file_path = download_mod(compatible_version, dest_folder)
+                print(f"Downloaded to: "f"{file_path}")
             else:
                 print(f"{mod_name}:""No compatible version found")
 
