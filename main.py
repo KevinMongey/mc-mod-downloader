@@ -40,6 +40,12 @@ def browse_folder():
         destination_entry.delete(0, "end")
         destination_entry.insert(0, folder)
 
+def toggle_dark_mode():
+    if dark_mode_checkbox.get():
+        ctk.set_appearance_mode("dark")
+    else:
+        ctk.set_appearance_mode("light")
+
 # gui card display
 def display_mod(mod, version):
     mod_frame = ctk.CTkFrame(
@@ -117,108 +123,160 @@ def display_mod(mod, version):
 app = ctk.CTk()
 app.title("Minecraft Mod Downloader")
 app.geometry("900x600")
+ctk.set_appearance_mode("dark")
 
-# -------------------
+
 # SETTINGS
-# -------------------
+
 settings_frame = ctk.CTkFrame(app)
 settings_frame.pack(
     fill="x",
     padx=20,
     pady=20
 )
-settings_label = ctk.CTkLabel(
+settings_header = ctk.CTkFrame(
     settings_frame,
+    fg_color="transparent"
+)
+settings_header.pack(
+    fill="x",
+    padx=20,
+    pady=15
+)
+settings_label = ctk.CTkLabel(
+    settings_header,
     text="Settings",
     font=("Arial", 24, "bold")
 )
 settings_label.pack(
-    anchor="w",
+    side="left"
+)
+
+dark_mode_checkbox = ctk.CTkCheckBox(
+    settings_header,
+    text="Dark Mode",
+    command=toggle_dark_mode
+)
+dark_mode_checkbox.pack(
+    side="right"
+)
+dark_mode_checkbox.select()
+
+settings_controls = ctk.CTkFrame(
+    settings_frame,
+    fg_color="transparent"
+)
+settings_controls.pack(
+    fill="x",
     padx=20,
-    pady=15
+    pady=(0, 20)
 )
 
 #version entry
+version_frame = ctk.CTkFrame(
+    settings_controls,
+    fg_color="transparent"
+)
+version_frame.pack(
+    side="left",
+    padx=(0, 20)
+)
 minecraft_version_label = ctk.CTkLabel(
-    settings_frame,
+    version_frame,
     text="Minecraft Version"
 )
 minecraft_version_label.pack(
     anchor="w",
-    padx=20,
     pady=(0, 5)
 )
 minecraft_version_entry = ctk.CTkEntry(
-    settings_frame,
+    version_frame,
+    width=150,
     placeholder_text="e.g. 1.21.1"
 )
-minecraft_version_entry.pack(
-    anchor="w",
-    padx=20,
-    pady=(0, 15)
-)
+minecraft_version_entry.pack()
 
 #loader dropdown
+loader_frame = ctk.CTkFrame(
+    settings_controls,
+    fg_color="transparent"
+)
+loader_frame.pack(
+    side="left",
+    padx=(0, 20)
+)
 loader_label = ctk.CTkLabel(
-    settings_frame,
+    loader_frame,
     text="Mod Loader"
 )
 loader_label.pack(
     anchor="w",
-    padx=20,
     pady=(0, 5)
 )
 loader_dropdown = ctk.CTkComboBox(
-    settings_frame,
+    loader_frame,
     values=[
         "Fabric",
         "Forge",
         "NeoForge",
         "Quilt"
-    ]
+    ],
+    width=150
 )
 loader_dropdown.set("Fabric")
-loader_dropdown.pack(
-    anchor="w",
-    padx=20,
-    pady=(0,15)
-)
+loader_dropdown.pack()
 
 #destination file select
+destination_frame = ctk.CTkFrame(
+    settings_controls,
+    fg_color="transparent"
+)
+destination_frame.pack(
+    side="left",
+    fill="x",
+    expand=True
+)
 destination_label = ctk.CTkLabel(
-    settings_frame,
+    destination_frame,
     text="Destination Folder"
 )
 destination_label.pack(
     anchor="w",
-    padx=20,
     pady=(0, 5)
 )
+destination_row = ctk.CTkFrame(
+    destination_frame,
+    fg_color="transparent"
+)
+destination_row.pack(
+    fill="x"
+)
 destination_entry = ctk.CTkEntry(
-    settings_frame,
-    width=400
+    destination_row,
+    placeholder_text="Select Minecraft mods folder"
 )
 destination_entry.pack(
-    anchor="w",
-    padx=20,
-    pady=(0, 10)
+    side="left",
+    fill="x",
+    expand=True,
+    padx=(0, 10)
 )
 browse_button = ctk.CTkButton(
-    settings_frame,
+    destination_row,
     text="Browse",
+    width=90,
     command=browse_folder
 )
 browse_button.pack(
-    anchor="w",
-    padx=20,
-    pady=(0, 20)
+    side="right"
 )
 
-# -------------------
 # BOTTOM SECTION
-# -------------------
 
-bottom_frame = ctk.CTkFrame(app)
+bottom_frame = ctk.CTkFrame(
+    app,
+    fg_color="transparent"
+)
 bottom_frame.pack(
     fill="both",
     expand=True,
@@ -227,12 +285,17 @@ bottom_frame.pack(
 )
 
 # mod list
-mod_list_frame = ctk.CTkFrame(bottom_frame)
+mod_list_frame = ctk.CTkFrame(
+    bottom_frame
+)
 mod_list_frame.pack(
     side="left",
     fill="both",
-    expand=True,
+    expand=False,
     padx=(0, 10)
+)
+mod_list_frame.configure(
+    width=300
 )
 mod_list_label = ctk.CTkLabel(
     mod_list_frame,
