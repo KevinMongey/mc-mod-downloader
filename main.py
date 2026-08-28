@@ -1,17 +1,25 @@
 import customtkinter as ctk
-from services.modrinth import search_mods
+from services.modrinth import search_mods, get_compatible_version
 from tkinter import filedialog
 
 def search_all_mods():
-    mod_names = mod_textbox.get("1.0", "end")
-    mod_names = mod_names.splitlines()
+    mod_names = mod_textbox.get("1.0", "end").splitlines()
+    mc_version = minecraft_version_entry.get()
+    loader = loader_dropdown.get().lower()
 
     for mod_name in mod_names:
         if mod_name.strip():
-            results = search_mods(mod_name)
+            project_id = search_mods(mod_name)
 
-            for mod in results:
-                print(mod["title"])
+            if not project_id:
+                print(f"{mod_name}: Mod not found")
+                continue
+
+            compatible_version = get_compatible_version(project_id, mc_version, loader)
+            if compatible_version:
+                print(f"{mod_name}: "f"{compatible_version['name']}")
+            else:
+                print(f"{mod_name}:""No compatible version found")
 
 def browse_folder():
     folder = filedialog.askdirectory()
