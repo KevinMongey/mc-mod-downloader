@@ -31,12 +31,25 @@ def get_compatible_version(project_id, mc_version, loader):
     if not versions:
         return None
 
-    return versions[0]
+    version = versions[0]
+    files = version["files"]
+    if not files:
+        return None
+    file = None
+    
+    for current_file in files:
+        if current_file["primary"]:
+            file = current_file
+            break
+    
+    if file is None:
+        file = files[0]
+
+    version["selected_file"] = file
+    return version
 
 def download_mod(version, dest_folder):
-    if not version["files"]:
-        return None
-    file = version["files"][0]
+    file = version["selected_file"]
 
     download_url = file["url"]
     response = requests.get(download_url)
@@ -48,6 +61,3 @@ def download_mod(version, dest_folder):
         mod_file.write(response.content)
 
     return file_path
-
-
-    
