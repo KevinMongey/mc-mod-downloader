@@ -1,8 +1,12 @@
 import customtkinter as ctk
 from services.modrinth import search_mods, get_compatible_version, download_mod
 from tkinter import filedialog
+from PIL import Image
+import requests
+import io
 
 def search_all_mods():
+    global download_count
     mod_names = mod_textbox.get("1.0", "end").splitlines()
     mc_version = minecraft_version_entry.get()
     loader = loader_dropdown.get().lower()
@@ -25,6 +29,8 @@ def search_all_mods():
                 print(f"Downloaded to: "f"{file_path}")
                 if file_path:
                     display_mod(mod, compatible_version)
+                    download_count += 1
+                    results_label.configure(text=f"Downloaded Mods: {download_count}")
             else:
                 print(f"{mod_name}:""No compatible version found")
 
@@ -44,6 +50,37 @@ def display_mod(mod, version):
         padx=10,
         pady=5
     )
+    try:
+        icon_response = requests.get(
+            mod["icon_url"]
+        )
+        icon_response.raise_for_status()
+        icon_image = Image.open(
+            io.BytesIO(icon_response.content)
+        )
+        icon_image = icon_image.resize(
+            (64, 64)
+        )
+        icon = ctk.CTkImage(
+            light_image=icon_image,
+            dark_image=icon_image,
+            size=(64, 64)
+        )
+        icon_label = ctk.CTkLabel(
+            mod_frame,
+            image=icon,
+            text=""
+        )
+        icon_label.pack(
+            side="left",
+            padx=15,
+            pady=15
+        )
+    except requests.RequestException:
+        print(
+            f"Could not download icon for "
+            f"{mod['title']}"
+        )
     mod_name_label = ctk.CTkLabel(
         mod_frame,
         text=mod["title"],
@@ -237,9 +274,11 @@ results_frame.pack(
     expand=True,
     padx=(10, 0)
 )
+download_count = 0
+
 results_label = ctk.CTkLabel(
     results_frame,
-    text="Downloaded Mods",
+    text=f"Downloaded Mods: {download_count}",
     font=("Arial", 20, "bold")
 )
 results_label.pack(
