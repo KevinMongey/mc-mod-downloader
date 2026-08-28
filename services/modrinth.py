@@ -13,8 +13,10 @@ def search_mods(mod_name):
     data = response.json()
     results = data["hits"]
 
-    project_id = results[0]["project_id"]
-    return project_id
+    if not results:
+        return None
+
+    return results[0]
 
 def get_compatible_version(project_id, mc_version, loader):
     url = f"https://api.modrinth.com/v2/project/{project_id}/version"

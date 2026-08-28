@@ -10,17 +10,21 @@ def search_all_mods():
 
     for mod_name in mod_names:
         if mod_name.strip():
-            project_id = search_mods(mod_name)
+            mod = search_mods(mod_name)
 
-            if not project_id:
+            if not mod:
                 print(f"{mod_name}: Mod not found")
                 continue
+
+            project_id = mod["project_id"]
 
             compatible_version = get_compatible_version(project_id, mc_version, loader)
             if compatible_version:
                 print(f"{mod_name}: "f"{compatible_version['name']}")
                 file_path = download_mod(compatible_version, dest_folder)
                 print(f"Downloaded to: "f"{file_path}")
+                if file_path:
+                    display_mod(mod, compatible_version)
             else:
                 print(f"{mod_name}:""No compatible version found")
 
@@ -30,7 +34,49 @@ def browse_folder():
         destination_entry.delete(0, "end")
         destination_entry.insert(0, folder)
 
-# gui
+# gui card display
+def display_mod(mod, version):
+    mod_frame = ctk.CTkFrame(
+        downloaded_mods_frame
+    )
+    mod_frame.pack(
+        fill="x",
+        padx=10,
+        pady=5
+    )
+    mod_name_label = ctk.CTkLabel(
+        mod_frame,
+        text=mod["title"],
+        font=("Arial", 18, "bold")
+    )
+    mod_name_label.pack(
+        anchor="w",
+        padx=15,
+        pady=(10, 2)
+    )
+    description_label = ctk.CTkLabel(
+        mod_frame,
+        text=mod["description"],
+        wraplength=400,
+        justify="left"
+    )
+    description_label.pack(
+        anchor="w",
+        padx=15,
+        pady=(0, 5)
+    )
+    filename = version["selected_file"]["filename"]
+    filename_label = ctk.CTkLabel(
+        mod_frame,
+        text=f"✓ Downloaded: {filename}"
+    )
+    filename_label.pack(
+        anchor="w",
+        padx=15,
+        pady=(0, 10)
+    )
+
+# gui create
 app = ctk.CTk()
 app.title("Minecraft Mod Downloader")
 app.geometry("900x600")
@@ -100,6 +146,7 @@ loader_dropdown.pack(
     padx=20,
     pady=(0,15)
 )
+
 #destination file select
 destination_label = ctk.CTkLabel(
     settings_frame,
@@ -133,6 +180,7 @@ browse_button.pack(
 # -------------------
 # BOTTOM SECTION
 # -------------------
+
 bottom_frame = ctk.CTkFrame(app)
 bottom_frame.pack(
     fill="both",
@@ -140,6 +188,7 @@ bottom_frame.pack(
     padx=20,
     pady=(0, 20)
 )
+
 # mod list
 mod_list_frame = ctk.CTkFrame(bottom_frame)
 mod_list_frame.pack(
@@ -179,6 +228,7 @@ search_button.pack(
     padx=20,
     pady=(0, 20)
 )
+
 # found mods
 results_frame = ctk.CTkFrame(bottom_frame)
 results_frame.pack(
@@ -196,6 +246,17 @@ results_label.pack(
     anchor="w",
     padx=20,
     pady=15
+)
+
+# downloaded mods
+downloaded_mods_frame = ctk.CTkScrollableFrame(
+    results_frame
+)
+downloaded_mods_frame.pack(
+    fill="both",
+    expand=True,
+    padx=10,
+    pady=(0, 10)
 )
 
 app.mainloop()
