@@ -1,6 +1,19 @@
-import requests
 import customtkinter as ctk
+from services.modrinth import search_mods
 
+def search_all_mods():
+    mod_names = mod_textbox.get("1.0", "end")
+    mod_names = mod_names.splitlines()
+
+    for mod_name in mod_names:
+        if mod_name.strip():
+            results = search_mods(mod_name)
+
+            for mod in results:
+                print(mod["title"])
+
+
+# gui
 app = ctk.CTk()
 app.title("Minecraft Mod Downloader")
 app.geometry("900x600")
@@ -34,7 +47,7 @@ bottom_frame.pack(
     padx=20,
     pady=(0, 20)
 )
-# LEFT SIDE
+# mod list
 mod_list_frame = ctk.CTkFrame(bottom_frame)
 mod_list_frame.pack(
     side="left",
@@ -52,7 +65,26 @@ mod_list_label.pack(
     padx=20,
     pady=15
 )
-# RIGHT SIDE
+mod_textbox = ctk.CTkTextbox(
+    mod_list_frame
+)
+mod_textbox.pack(
+    fill="both",
+    expand=True,
+    padx=20,
+    pady=(0, 10)
+)
+search_button = ctk.CTkButton(
+    mod_list_frame,
+    text="Search Mods",
+    command=search_all_mods
+)
+search_button.pack(
+    fill="x",
+    padx=20,
+    pady=(0, 20)
+)
+# found mods
 results_frame = ctk.CTkFrame(bottom_frame)
 results_frame.pack(
     side="right",
@@ -62,7 +94,7 @@ results_frame.pack(
 )
 results_label = ctk.CTkLabel(
     results_frame,
-    text="Found & Downloaded Mods",
+    text="Downloaded Mods",
     font=("Arial", 20, "bold")
 )
 results_label.pack(
@@ -72,22 +104,3 @@ results_label.pack(
 )
 
 app.mainloop()
-
-
-'''
-def search_mods(mod_name):
-    url = "https://api.modrinth.com/v2/search"
-
-    parameters = {
-        "query": mod_name,
-        "limit": 10
-    }
-
-    response = requests.get(url, params=parameters)
-    data = response.json()
-    return data
-
-mod_name = input("Enter a mod name: ")
-results = search_mods(mod_name)
-print(results)
-'''
