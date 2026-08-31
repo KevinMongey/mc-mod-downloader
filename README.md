@@ -6,6 +6,7 @@ Users can input mod name, game version and preferred mod loader, the mods will b
 
 <img width="872" height="571" alt="image" src="https://github.com/user-attachments/assets/89a18944-f4a7-46ff-b991-22b014448627" />
 
+
 ## Installation
 
 ### Requirements
@@ -26,3 +27,24 @@ python -m venv .venv
 pip install -r requirements.txt
 python main.py
 ```
+
+
+## Technologies Used
+
+### Language
+- Python
+
+### Framework
+- CustomTkinter – Graphical user interface
+
+### Libraries
+- Requests – HTTP requests and communication with the Modrinth API
+- Pillow – Loading and displaying mod icons
+
+### API
+- Modrinth API – Mod search, version compatibility, and mod file information
+
+## AI Acknowledgment
+- **ChatGPT**: Used for code suggestions and helped me understand how files worked in python, as python was a pretty new language to me at this point.
+- **Claude**:  Helped generate the repetitive GUI code in main.py
+
